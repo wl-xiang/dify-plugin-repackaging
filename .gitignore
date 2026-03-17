@@ -2,3 +2,9 @@
 .idea
 .vscode
 *.iml
+
+plugins
+offlines
+mods
+flattens
+./*.difypkg
