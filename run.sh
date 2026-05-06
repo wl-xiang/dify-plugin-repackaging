@@ -5,7 +5,7 @@
 PLATFORM="manylinux_2_17_x86_64"
 ADDON_REQUIREMENTS_FILE="/app/addons.txt"
 COMMAND="local"
-PLUGIN_PATH="/app/plugins/bowenliang123-md_exporter_3.6.9.difypkg"
+PLUGIN_PATH="/app/plugins/aopstudio-csv_sql_query_0.0.1.difypkg"
 
 # 构建命令
 RUN_CMD="./plugin_repackaging.sh \

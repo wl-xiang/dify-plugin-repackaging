@@ -8,3 +8,6 @@ offlines
 mods
 flattens
 ./*.difypkg
+
+/addons.txt
+/run.sh

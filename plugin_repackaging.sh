@@ -135,7 +135,12 @@ repackage(){
 	# Check if addon requirements file is provided and exists
 	if [ -n "${ADDON_REQUIREMENTS_FILE}" ]; then
 		if [ -f "${ADDON_REQUIREMENTS_FILE}" ] && [ -r "${ADDON_REQUIREMENTS_FILE}" ]; then
-			echo "Appending addon requirements from ${ADDON_REQUIREMENTS_FILE} to requirements.txt..."
+			echo "Processing addon requirements from ${ADDON_REQUIREMENTS_FILE}..."
+			override_requirements_from_addon requirements.txt "${ADDON_REQUIREMENTS_FILE}"
+			if [[ $? -ne 0 ]]; then
+				echo "Failed to process addon requirements override."
+				exit 1
+			fi
 			echo "" >> requirements.txt
 			cat "${ADDON_REQUIREMENTS_FILE}" >> requirements.txt
 			if [[ $? -ne 0 ]]; then
@@ -194,6 +199,40 @@ install_unzip(){
 			exit 1
 		fi
 	fi
+}
+
+override_requirements_from_addon(){
+	local REQUIREMENTS_FILE=$1
+	local ADDON_FILE=$2
+	
+	if [ ! -f "${ADDON_FILE}" ] || [ ! -r "${ADDON_FILE}" ]; then
+		return 0
+	fi
+	
+	local TEMP_REQUIREMENTS=$(mktemp)
+	local TEMP_ADDON=$(mktemp)
+	
+	cp "${REQUIREMENTS_FILE}" "${TEMP_REQUIREMENTS}"
+	cp "${ADDON_FILE}" "${TEMP_ADDON}"
+	
+	while IFS= read -r addon_line; do
+		[[ -z "${addon_line}" ]] && continue
+		[[ "${addon_line}" =~ ^[[:space:]]*# ]] && continue
+		
+		local addon_name=$(echo "${addon_line}" | sed -E 's/^([a-zA-Z0-9_-]+).*/\1/' | tr -d '[:space:]')
+		
+		if [ -z "${addon_name}" ]; then
+			continue
+		fi
+		
+		if grep -qE "^${addon_name}[[:space:]=<>!~]" "${TEMP_REQUIREMENTS}" 2>/dev/null; then
+			echo "Overriding package: ${addon_name}"
+			sed -i -E "/^${addon_name}[[:space:]=<>!~]/d" "${TEMP_REQUIREMENTS}"
+		fi
+	done < "${TEMP_ADDON}"
+	
+	cat "${TEMP_REQUIREMENTS}" > "${REQUIREMENTS_FILE}"
+	rm -f "${TEMP_REQUIREMENTS}" "${TEMP_ADDON}"
 }
 
 clean() {
