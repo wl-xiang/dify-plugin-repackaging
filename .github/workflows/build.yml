@@ -38,12 +38,12 @@ jobs:
         run: |
           echo "plugin_author   = ${{ inputs.plugin_author }}"
           echo "plugin_name     = ${{ inputs.plugin_name }}"
-          echo "plugin_version  = ${{ inputs.plugin_version }}"
-          echo "platform_arm    = ${{ inputs.platform_arm }}"
-          echo "need_addon      = ${{ inputs.need_addon }}"
-          echo "addon_packages  = ${{ inputs.addon_packages }}"
+          echo "plugin_version = ${{ inputs.plugin_version }}"
+          echo "platform_arm   = ${{ inputs.platform_arm }}"
+          echo "need_addon     = ${{ inputs.need_addon }}"
+          echo "addon_packages = ${{ inputs.addon_packages }}"
 
-      - name: Resolve platform
+      - name: Resolve platform and addon settings
         run: |
           if [ "${{ inputs.platform_arm }}" = "true" ]; then
             echo "PIP_PLATFORM=manylinux_2_17_aarch64" >> "$GITHUB_ENV"
@@ -51,6 +51,12 @@ jobs:
           else
             echo "PIP_PLATFORM=manylinux_2_17_x86_64" >> "$GITHUB_ENV"
             echo "PACKAGE_SUFFIX=offline" >> "$GITHUB_ENV"
+          fi
+
+          if [ "${{ inputs.need_addon }}" = "true" ] && [ -n "${{ inputs.addon_packages }}" ]; then
+            echo "has_addons=true" >> "$GITHUB_ENV"
+          else
+            echo "has_addons=false" >> "$GITHUB_ENV"
           fi
 
       - name: Checkout repository
@@ -65,7 +71,7 @@ jobs:
         run: chmod +x ./plugin_repackaging.sh
 
       - name: Prepare addon requirements file
-        if: inputs.need_addon == true && inputs.addon_packages != ''
+        if: inputs.need_addon && inputs.addon_packages
         run: |
           echo "${{ inputs.addon_packages }}" | tr ';' '\n' | sed '/^$/d' > addons.txt
           echo "Addon packages prepared:"
@@ -74,7 +80,7 @@ jobs:
       - name: Run plugin repackaging script
         run: |
           PIP_MIRROR_URL=https://pypi.org/simple
-          if [ "${{ inputs.need_addon }}" = "true" ] && [ -n "${{ inputs.addon_packages }}" ]; then
+          if [ "${{ env.has_addons }}" = "true" ]; then
             ./plugin_repackaging.sh \
               -p ${{ env.PIP_PLATFORM }} \
               -s ${{ env.PACKAGE_SUFFIX }} \
