@@ -3,7 +3,9 @@
 
 DEFAULT_GITHUB_API_URL=https://github.com
 DEFAULT_MARKETPLACE_API_URL=https://marketplace.dify.ai
-DEFAULT_PIP_MIRROR_URL=https://mirrors.aliyun.com/pypi/simple
+# DEFAULT_PIP_MIRROR_URL=https://mirrors.aliyun.com/pypi/simple
+DEFAULT_PIP_MIRROR_URL=https://pypi.org/simple/
+TRUSTED_HOST="pypi.org"
 
 GITHUB_API_URL="${GITHUB_API_URL:-$DEFAULT_GITHUB_API_URL}"
 MARKETPLACE_API_URL="${MARKETPLACE_API_URL:-$DEFAULT_MARKETPLACE_API_URL}"
@@ -146,7 +148,8 @@ repackage(){
 			exit 1
 		fi
 	fi
-	pip download ${PIP_PLATFORM} -r requirements.txt -d ./wheels --index-url ${PIP_MIRROR_URL} --trusted-host mirrors.aliyun.com
+	pip install --upgrade pip
+	pip download ${PIP_PLATFORM} -r requirements.txt -d ./wheels --index-url ${PIP_MIRROR_URL} --trusted-host ${TRUSTED_HOST}
 	if [[ $? -ne 0 ]]; then
 		echo "Pip download failed."
 		exit 1
