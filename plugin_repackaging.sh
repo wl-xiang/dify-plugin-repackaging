@@ -153,6 +153,20 @@ repackage(){
 			exit 1
 		fi
 	fi
+	if [ -n "${OVERRIDE_VERSIONS_FILE}" ]; then
+		if [ -f "${OVERRIDE_VERSIONS_FILE}" ] && [ -r "${OVERRIDE_VERSIONS_FILE}" ]; then
+			echo "Applying version overrides from ${OVERRIDE_VERSIONS_FILE}..."
+			apply_version_overrides requirements.txt "${OVERRIDE_VERSIONS_FILE}"
+			if [[ $? -ne 0 ]]; then
+				echo "Failed to apply version overrides."
+				exit 1
+			fi
+			echo "Version overrides applied successfully."
+		else
+			echo "Error: Override versions file ${OVERRIDE_VERSIONS_FILE} does not exist or is not readable."
+			exit 1
+		fi
+	fi
 	pip install --upgrade pip
 	pip download ${PIP_PLATFORM} -r requirements.txt -d ./wheels --index-url ${PIP_MIRROR_URL} --trusted-host ${TRUSTED_HOST}
 	if [[ $? -ne 0 ]]; then
@@ -233,6 +247,67 @@ override_requirements_from_addon(){
 	
 	cat "${TEMP_REQUIREMENTS}" > "${REQUIREMENTS_FILE}"
 	rm -f "${TEMP_REQUIREMENTS}" "${TEMP_ADDON}"
+}
+
+apply_version_overrides(){
+	local REQUIREMENTS_FILE=$1
+	local OVERRIDE_FILE=$2
+
+	if [ ! -f "${OVERRIDE_FILE}" ] || [ ! -r "${OVERRIDE_FILE}" ]; then
+		return 0
+	fi
+
+	local TEMP_REQUIREMENTS=$(mktemp)
+	local OVERRIDE_CONTENT=$(cat "${OVERRIDE_FILE}")
+
+	while IFS= read -r req_line; do
+		if [[ "${req_line}" =~ ^[[:space:]]*- ]] || [[ -z "${req_line}" ]] || [[ "${req_line}" =~ ^[[:space:]]*# ]]; then
+			echo "${req_line}" >> "${TEMP_REQUIREMENTS}"
+			continue
+		fi
+
+		local req_name=$(echo "${req_line}" | sed -E 's/^([a-zA-Z0-9_.-]+).*/\1/' | tr -d '[:space:]')
+
+		if [ -n "${req_name}" ]; then
+			local found_override=""
+			while IFS= read -r override_line; do
+				[[ -z "${override_line}" ]] && continue
+				[[ "${override_line}" =~ ^[[:space:]]*# ]] && continue
+
+				local override_name=$(echo "${override_line}" | sed -E 's/^([a-zA-Z0-9_.-]+).*/\1/' | tr -d '[:space:]')
+
+				if [ "${override_name}" = "${req_name}" ]; then
+					found_override="${override_line}"
+					break
+				fi
+			done <<< "${OVERRIDE_CONTENT}"
+
+			if [ -n "${found_override}" ]; then
+				echo "Overriding version for package: ${req_name}"
+				echo "${found_override}" >> "${TEMP_REQUIREMENTS}"
+			else
+				echo "${req_line}" >> "${TEMP_REQUIREMENTS}"
+			fi
+		else
+			echo "${req_line}" >> "${TEMP_REQUIREMENTS}"
+		fi
+	done < "${REQUIREMENTS_FILE}"
+
+	while IFS= read -r override_line; do
+		[[ -z "${override_line}" ]] && continue
+		[[ "${override_line}" =~ ^[[:space:]]*# ]] && continue
+		[[ "${override_line}" =~ ^[[:space:]]*- ]] && continue
+
+		local override_name=$(echo "${override_line}" | sed -E 's/^([a-zA-Z0-9_.-]+).*/\1/' | tr -d '[:space:]')
+
+		if [ -n "${override_name}" ] && ! grep -qE "^${override_name}[[:space:]=<>!~]" "${REQUIREMENTS_FILE}" 2>/dev/null; then
+			echo "Adding new package from override: ${override_name}"
+			echo "${override_line}" >> "${TEMP_REQUIREMENTS}"
+		fi
+	done <<< "${OVERRIDE_CONTENT}"
+
+	cat "${TEMP_REQUIREMENTS}" > "${REQUIREMENTS_FILE}"
+	rm -f "${TEMP_REQUIREMENTS}"
 }
 
 clean() {
@@ -318,12 +393,13 @@ clean() {
 }
 
 print_usage() {
-	echo "usage: $0 [-p platform] [-s package_suffix] [-r addon-requirements.txt] {market|github|local|clean}"
+	echo "usage: $0 [-p platform] [-s package_suffix] [-r addon-requirements.txt] [-o override-versions.txt] {market|github|local|clean}"
 	echo "-p platform: python packages' platform. Using for crossing repacking.
         For example: -p manylinux2014_x86_64 or -p manylinux2014_aarch64"
 	echo "-s package_suffix: The suffix name of the output offline package.
         For example: -s linux-amd64 or -s linux-arm64"
 	echo "-r addon-requirements.txt: Addon requirements file to append to main requirements.txt"
+	echo "-o override-versions.txt: Override versions file to directly replace package versions in requirements.txt"
 	echo "clean: Clean specified directories."
 	echo "  Usage: $0 clean [directory]"
 	echo "  Example: $0 clean (clean all directories)"
@@ -332,13 +408,15 @@ print_usage() {
 }
 
 ADDON_REQUIREMENTS_FILE=""
+OVERRIDE_VERSIONS_FILE=""
 
-while getopts "p:s:r:" opt;
+while getopts "p:s:r:o:" opt;
 do
 	case "$opt" in
 		p) PIP_PLATFORM="--platform ${OPTARG} --only-binary=:all:" ;;
 		s) PACKAGE_SUFFIX="${OPTARG}" ;;
 		r) ADDON_REQUIREMENTS_FILE="${OPTARG}" ;;
+		o) OVERRIDE_VERSIONS_FILE="${OPTARG}" ;;
 		*) print_usage; exit 1 ;;
 	esac
 done
