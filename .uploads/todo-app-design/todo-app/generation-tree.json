@@ -1,0 +1,47 @@
+{
+  "root": {
+    "nodeId": "gen-project-shell",
+    "kind": "project-shell",
+    "pageIds": ["page-task-list", "page-add-task", "page-categories"],
+    "output": "partials/project-shell.html",
+    "sharedRegions": ["bottom tab bar"],
+    "privateRegions": [],
+    "mutableSlots": ["activeTab", "pageTitle"],
+    "status": "planned",
+    "children": [
+      {
+        "nodeId": "gen-page-task-list",
+        "kind": "page-leaf",
+        "pageIds": ["page-task-list"],
+        "output": "pages/task-list.html",
+        "sharedRegions": [],
+        "privateRegions": ["page body: greeting, date, filter tabs, task list, FAB"],
+        "mutableSlots": ["activeTab"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-add-task",
+        "kind": "page-leaf",
+        "pageIds": ["page-add-task"],
+        "output": "pages/add-task.html",
+        "sharedRegions": [],
+        "privateRegions": ["page body: add task form"],
+        "mutableSlots": ["activeTab"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-categories",
+        "kind": "page-leaf",
+        "pageIds": ["page-categories"],
+        "output": "pages/categories.html",
+        "sharedRegions": [],
+        "privateRegions": ["page body: category list"],
+        "mutableSlots": ["activeTab"],
+        "status": "planned",
+        "children": []
+      }
+    ]
+  }
+}

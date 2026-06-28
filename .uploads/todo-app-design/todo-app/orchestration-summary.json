@@ -1,0 +1,247 @@
+{
+  "project": {
+    "name": "Todo App",
+    "path": "/workspace/todo-app",
+    "operation": "create",
+    "deviceType": "mobile",
+    "language": "zh-CN",
+    "dashboardMode": false,
+    "replicationMode": null,
+    "sourceUrl": null,
+    "visualSpecExcerpt": null,
+    "styleDefinitionBrief": "个人待办工具，清新鼠尾草绿主色，暖灰中性色，圆角柔和，留白充裕，呼吸感工具型设计",
+    "designRead": "personal productivity / casual users / calm fresh utility / medium-low density / avoid corporate blue",
+    "designDials": {
+      "layoutVariance": 2,
+      "motionIntensity": 2,
+      "visualDensity": 2
+    },
+    "styleContinuityAnchors": {
+      "colorSystem": {
+        "primaryColorRole": "sage green for primary actions, checkmarks, active states",
+        "brandHuePolicy": "single primary sage green hue only; no secondary/accent brand hue",
+        "stateColors": "semantic success/warning/error/info for status only"
+      },
+      "shapeSystem": "rounded-soft: sm 6px, md 10px, lg 14px, full pill",
+      "typographySystem": "Inter + Noto Sans SC sans-serif stack; clean and legible",
+      "spacingSystem": "4px base, generous padding for breathing room",
+      "componentLanguage": "clean cards with subtle border, no heavy shadows on static elements",
+      "surfaceAndDepth": "border-first for static cards, shadow only for floating layers (modal, drawer)",
+      "imageryAndIconography": "minimal line icons, checkmarks as primary visual motif",
+      "interactionTone": "gentle micro-feedback, smooth transitions"
+    },
+    "specsConstraints": null,
+    "sharedProjectShellContract": {
+      "navigationShell": "top status bar + app title + bottom tab bar with 3 tabs (tasks, add, categories)",
+      "primaryColorSystem": "single sage green primary hue; identities via neutral tints",
+      "typographySystem": "Inter + Noto Sans SC, h1 24px bold, h2 20px semi, body 14px regular",
+      "radiusScale": "sm 6px / md 10px / lg 14px / full pill",
+      "surfaceDepthModel": "border-first static, shadow only for floating layers",
+      "ctaStyle": "rounded-full pill button, sage green bg, white text, gentle hover lift",
+      "alignmentRules": "left-aligned content, centered modals, consistent 16-20px horizontal padding"
+    },
+    "generationTree": {
+      "root": {
+        "nodeId": "gen-project-shell",
+        "kind": "project-shell",
+        "pageIds": ["page-task-list", "page-add-task", "page-categories"],
+        "output": "partials/project-shell.html",
+        "sharedRegions": ["bottom tab bar"],
+        "privateRegions": [],
+        "mutableSlots": ["activeTab", "pageTitle"],
+        "status": "planned",
+        "children": [
+          {
+            "nodeId": "gen-page-task-list",
+            "kind": "page-leaf",
+            "pageIds": ["page-task-list"],
+            "output": "pages/task-list.html",
+            "sharedRegions": [],
+            "privateRegions": ["page body: greeting, date, filter tabs, task list, FAB"],
+            "mutableSlots": ["activeTab"],
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-add-task",
+            "kind": "page-leaf",
+            "pageIds": ["page-add-task"],
+            "output": "pages/add-task.html",
+            "sharedRegions": [],
+            "privateRegions": ["page body: add task form with title, description, category, priority, date"],
+            "mutableSlots": ["activeTab"],
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-categories",
+            "kind": "page-leaf",
+            "pageIds": ["page-categories"],
+            "output": "pages/categories.html",
+            "sharedRegions": [],
+            "privateRegions": ["page body: category list, add new category"],
+            "mutableSlots": ["activeTab"],
+            "status": "planned",
+            "children": []
+          }
+        ]
+      }
+    }
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "libraryIdentity": null,
+    "cssFilePath": "/workspace/todo-app/colors_and_type.css",
+    "brandPrefix": "todo",
+    "themeMode": "light",
+    "designDecisionSummary": "Sage green primary, warm gray neutral, soft rounded corners, border-first depth, Inter+Noto Sans SC typography, generous spacing",
+    "componentContractKind": null,
+    "forbiddenInventedComponents": [],
+    "allowedComponents": [],
+    "styleConstraints": {
+      "radiusMax": 14,
+      "spacingBase": 4,
+      "fontSizeBody": 14,
+      "fontSizeMin": 11,
+      "controlHeightDefault": 40,
+      "controlHeightLarge": 48
+    },
+    "productContext": {
+      "kitType": null,
+      "productType": "personal productivity todo app"
+    },
+    "actualTokenNameReference": []
+  },
+  "pages": [
+    {
+      "nodeId": "page-task-list",
+      "slug": "task-list",
+      "title": "任务首页",
+      "htmlSrc": "pages/task-list.html",
+      "pageIndex": 1,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "task-driven",
+      "businessScenario": "daily task list with greeting, date display, filter tabs, task items with checkboxes",
+      "visualNorthStar": "a calm, breathable task interface where the sage green checkmark is the visual anchor",
+      "compositionPattern": "mobile single-column list with sticky header",
+      "continuityAnchors": ["bottom tab bar", "sage green primary", "card border style", "font system"],
+      "libraryRestraintMode": false,
+      "uiKitPath": null,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false
+    },
+    {
+      "nodeId": "page-add-task",
+      "slug": "add-task",
+      "title": "添加任务",
+      "htmlSrc": "pages/add-task.html",
+      "pageIndex": 2,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "task-driven",
+      "businessScenario": "add new task form with title input, optional description, category picker, priority selector, due date",
+      "visualNorthStar": "a focused, distraction-free form where the input field is the hero element",
+      "compositionPattern": "mobile centered form with floating save button",
+      "continuityAnchors": ["bottom tab bar", "sage green primary", "input field style", "font system"],
+      "libraryRestraintMode": false,
+      "uiKitPath": null,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false
+    },
+    {
+      "nodeId": "page-categories",
+      "slug": "categories",
+      "title": "分类管理",
+      "htmlSrc": "pages/categories.html",
+      "pageIndex": 3,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "information-dense",
+      "businessScenario": "manage task categories with colored labels, task counts, edit/delete actions",
+      "visualNorthStar": "a clean card grid where each category is a distinct colored tag with task count",
+      "compositionPattern": "mobile card grid with header",
+      "continuityAnchors": ["bottom tab bar", "sage green primary", "card style", "font system"],
+      "libraryRestraintMode": false,
+      "uiKitPath": null,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false
+    }
+  ],
+  "assets": [],
+  "wiringPlan": [
+    {
+      "sourcePageId": "page-task-list",
+      "targetPageId": "page-add-task",
+      "domId": "fab-add",
+      "label": "add new task"
+    },
+    {
+      "sourcePageId": "page-add-task",
+      "targetPageId": "page-task-list",
+      "domId": "save-task",
+      "label": "save and return"
+    },
+    {
+      "sourcePageId": "page-task-list",
+      "targetPageId": "page-categories",
+      "domId": "tab-categories",
+      "label": "manage categories"
+    },
+    {
+      "sourcePageId": "page-categories",
+      "targetPageId": "page-task-list",
+      "domId": "tab-tasks",
+      "label": "back to tasks"
+    },
+    {
+      "sourcePageId": "page-add-task",
+      "targetPageId": "page-task-list",
+      "domId": "tab-tasks-add",
+      "label": "back to tasks",
+      "hideEdge": true
+    },
+    {
+      "sourcePageId": "page-add-task",
+      "targetPageId": "page-categories",
+      "domId": "tab-categories-add",
+      "label": "go to categories",
+      "hideEdge": true
+    },
+    {
+      "sourcePageId": "page-categories",
+      "targetPageId": "page-add-task",
+      "domId": "tab-add-categories",
+      "label": "go to add",
+      "hideEdge": true
+    }
+  ],
+  "hiddenInteractionPlan": []
+}

@@ -1,0 +1,16 @@
+{
+  "name": "todo-app-server",
+  "version": "1.0.0",
+  "description": "Express + SQLite backend for Todo App",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.1"
+  }
+}

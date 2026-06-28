@@ -1,0 +1,103 @@
+{
+  "data": [
+    {
+      "id": "page-task-list",
+      "title": "任务首页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1719571200000,
+      "canvasData": {
+        "x": 420,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/task-list.html",
+        "interactions": [
+          {
+            "domId": "fab-add",
+            "targetPageId": "page-add-task",
+            "transitionLabel": "新建任务"
+          },
+          {
+            "domId": "tab-categories",
+            "targetPageId": "page-categories",
+            "transitionLabel": "管理分类"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-add-task",
+      "title": "添加任务",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1719571200000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/add-task.html",
+        "interactions": [
+          {
+            "domId": "save-task",
+            "targetPageId": "page-task-list",
+            "transitionLabel": "保存返回"
+          },
+          {
+            "domId": "tab-tasks-add",
+            "targetPageId": "page-task-list",
+            "hideEdge": true,
+            "transitionLabel": "返回任务"
+          },
+          {
+            "domId": "tab-categories-add",
+            "targetPageId": "page-categories",
+            "hideEdge": true,
+            "transitionLabel": "查看分类"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-categories",
+      "title": "分类管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1719571200000,
+      "canvasData": {
+        "x": 0,
+        "y": 604,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/categories.html",
+        "interactions": [
+          {
+            "domId": "tab-tasks",
+            "targetPageId": "page-task-list",
+            "transitionLabel": "返回任务"
+          },
+          {
+            "domId": "tab-add-categories",
+            "targetPageId": "page-add-task",
+            "hideEdge": true,
+            "transitionLabel": "新建任务"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "mobile",
+    "projectName": "Todo App",
+    "windowSize": {
+      "width": 800,
+      "height": 600
+    },
+    "showEdge": true
+  }
+}
