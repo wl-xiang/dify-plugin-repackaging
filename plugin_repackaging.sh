@@ -415,11 +415,11 @@ print_usage() {
 	exit 1
 }
 
-# Expand a manylinux platform tag to include compatible newer manylinux tags.
+# Expand a manylinux platform tag to include compatible manylinux tags.
 # Newer packages (e.g. gevent>=26) only ship manylinux_2_28 wheels, while older
-# packages (e.g. pydantic-core) only ship manylinux_2_17 wheels. Requesting both
-# tags lets pip find wheels from either set, since a manylinux_2_17 wheel is
-# forward-compatible with a manylinux_2_28 (glibc>=2.28) runtime.
+# packages (e.g. pydantic-core) only ship manylinux_2_17 wheels. A wheel built
+# for an older glibc runs on any newer runtime, so when targeting a newer glibc
+# we also request every older standard tag, letting pip find wheels from either set.
 expand_pip_platform() {
 	local p="$1"
 	local flags="--platform ${p}"
@@ -436,6 +436,27 @@ expand_pip_platform() {
 			# already the newer tag; also accept the older one for fallback
 			local arch="${p#manylinux_2_28_}"
 			flags="$flags --platform manylinux_2_17_${arch}"
+			;;
+		manylinux_2_34_*)
+			# glibc>=2.34 runtime can run 2_28 and 2_17 wheels as well
+			local arch="${p#manylinux_2_34_}"
+			flags="$flags --platform manylinux_2_28_${arch} --platform manylinux_2_17_${arch}"
+			;;
+		manylinux_2_*_*)
+			# Custom glibc version (e.g. manylinux_2_31_x86_64): collect every
+			# standard tag whose glibc requirement is <= the target version.
+			local rest="${p#manylinux_2_}"
+			local arch="${rest#*_}"
+			local ver="${rest%%_*}"
+			if echo "$ver" | grep -qE '^[0-9]+$'; then
+				if [ "$ver" -ge 34 ]; then
+					flags="$flags --platform manylinux_2_34_${arch}"
+				fi
+				if [ "$ver" -ge 28 ]; then
+					flags="$flags --platform manylinux_2_28_${arch}"
+				fi
+				flags="$flags --platform manylinux_2_17_${arch}"
+			fi
 			;;
 	esac
 	echo "${flags} --only-binary=:all:"
