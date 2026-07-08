@@ -16,7 +16,7 @@ on:
         required: true
         type: string
       platform_arm:
-        description: "Use ARM platform (true = manylinux_2_17_aarch64, false = manylinux_2_17_x86_64)"
+        description: "Use ARM platform (true = aarch64, false = x86_64). Wheels for both manylinux_2_17 and manylinux_2_28 are collected for compatibility."
         required: true
         default: "false"
 

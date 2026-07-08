@@ -415,9 +415,35 @@ print_usage() {
 	exit 1
 }
 
+# Expand a manylinux platform tag to include compatible newer manylinux tags.
+# Newer packages (e.g. gevent>=26) only ship manylinux_2_28 wheels, while older
+# packages (e.g. pydantic-core) only ship manylinux_2_17 wheels. Requesting both
+# tags lets pip find wheels from either set, since a manylinux_2_17 wheel is
+# forward-compatible with a manylinux_2_28 (glibc>=2.28) runtime.
+expand_pip_platform() {
+	local p="$1"
+	local flags="--platform ${p}"
+	case "$p" in
+		manylinux_2_17_*)
+			local arch="${p#manylinux_2_17_}"
+			flags="$flags --platform manylinux_2_28_${arch}"
+			;;
+		manylinux2014_*)
+			local arch="${p#manylinux2014_}"
+			flags="$flags --platform manylinux_2_17_${arch} --platform manylinux_2_28_${arch}"
+			;;
+		manylinux_2_28_*)
+			# already the newer tag; also accept the older one for fallback
+			local arch="${p#manylinux_2_28_}"
+			flags="$flags --platform manylinux_2_17_${arch}"
+			;;
+	esac
+	echo "${flags} --only-binary=:all:"
+}
+
 while getopts "p:s:R" opt; do
 	case "$opt" in
-		p) RAW_PLATFORM="${OPTARG}"; PIP_PLATFORM="--platform ${OPTARG} --only-binary=:all:" ;;
+		p) RAW_PLATFORM="${OPTARG}"; PIP_PLATFORM=$(expand_pip_platform "${OPTARG}") ;;
 		s) PACKAGE_SUFFIX="${OPTARG}" ;;
 		R) PRERELEASE_ALLOW=1 ;;
 		*) print_usage; exit 1 ;;
