@@ -19,6 +19,20 @@ on:
         description: "Use ARM platform (true = aarch64, false = x86_64). Wheels for both manylinux_2_17 and manylinux_2_28 are collected for compatibility."
         required: true
         default: "false"
+      glibc_version:
+        description: "Target glibc version. Select 'other' to specify a custom version."
+        required: true
+        type: choice
+        default: "2.17"
+        options:
+          - "2.17"
+          - "2.28"
+          - "2.34"
+          - "other"
+      custom_glibc_version:
+        description: "Custom glibc version (used only when glibc_version is 'other'). Example: 2.31"
+        required: false
+        type: string
 
 jobs:
   repackage:
